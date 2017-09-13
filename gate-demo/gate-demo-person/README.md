@@ -1,0 +1,5 @@
+# 测试DEMO
+测试zuul的路由功能
+测试ApiGateSecurity 权限拦截功能
+测试使用Feign调用无权限拦截的第三方服务功能
+测试使用Feign调用有权限拦截的第三方服务功能

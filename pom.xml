@@ -21,6 +21,9 @@
         <module>gate-eureka</module>
         <module>testSv</module>
         <module>gate-way</module>
+        <module>gate-common</module>
+        <module>gate-agent</module>
+        <module>gate-demo</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
