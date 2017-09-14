@@ -13,7 +13,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>gate-demo-client</module>
-        <module>gate-demo-provider</module>
         <module>gate-demo-language</module>
         <module>gate-demo-person</module>
     </modules>
@@ -23,7 +22,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Dalston.SR1</version>
+                <version>Dalston.SR3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

@@ -1,0 +1,41 @@
+spring:
+    application:
+        name: gate-demo-person
+
+server:
+    port: 8767
+
+eureka:
+    instance:
+        statusPageUrlPath: ${management.context-path}/info
+        healthCheckUrlPath: ${management.context-path}/health
+        preferIpAddress: true
+    client:
+        serviceUrl:
+            defaultZone: http://localhost:8761/eureka/
+
+gate:
+    client:
+        authHeader: access-token
+        authHost: http://localhost:8762/api/authen
+        clientId: gate-demo-person
+        secret: 123456
+
+feign:
+  hystrix:
+      enabled: true
+  compression:
+    request:
+      enabled: true
+      mime-types: text/xml,application/xml,application/json
+      min-request-size: 2048
+    response:
+      enabled: true
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
