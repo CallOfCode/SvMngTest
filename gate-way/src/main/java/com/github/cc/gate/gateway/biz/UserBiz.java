@@ -27,6 +27,11 @@ public class UserBiz extends BaseBiz<UserMapper,User> {
         super.updateById(entity);
     }
 
+    public void updatePwdByUsername(String username,String pwd){
+        String password = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode(pwd);
+        mapper.updatePwdByUsername(username,password);
+    }
+
     /**
      * 根据用户名获取用户信息
      * @param username

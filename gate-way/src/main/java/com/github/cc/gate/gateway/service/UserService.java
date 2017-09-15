@@ -20,4 +20,8 @@ public class UserService {
         return info;
     }
 
+    public void updatePassword(String username,String password){
+        userBiz.updatePwdByUsername(username,password);
+    }
+
 }

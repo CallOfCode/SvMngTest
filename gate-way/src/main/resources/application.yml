@@ -49,7 +49,7 @@ server:
 
 gate:
     ignore:
-        startWith: /admin,/index,/about
+        startWith: /admin,/index,/about,/druid,/manage,/account
         contain: .
     client:
         authHeader: access-token
@@ -87,13 +87,15 @@ ribbon:
   ConnectTimeout: 3000
   ReadTimeout: 60000
 
-management:
-  security:
-    enabled: false
-
 swagger:
     basepackage: com.github.cc.gate.gateway.controller.api
     service:
         name: 网关中心Api
         description: 网关中心鉴权Api
         developer: Frank
+
+#actuator
+management:
+    security:
+        enabled: false
+    context-path: /manage

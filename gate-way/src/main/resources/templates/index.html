@@ -30,7 +30,7 @@
 							<!--<i class="fa fa-life-bouy" aria-hidden="true"></i>-->
 						<!--</div>-->
 						<a class="logo" style="left: 0;">
-							<span style="font-size: 22px;">Gate-Mng</span>
+							<span style="font-size: 22px;">网关管理系统</span>
 						</a>
 					</div>
 					<ul class="layui-nav admin-header-item" >
@@ -39,9 +39,6 @@
 							<dl class="layui-nav-child" id="menuSys"> <!-- 二级菜单 -->
 							</dl>
 						</li>
-						<li class="layui-nav-item">
-							<a href="javascript:void(0);" target="_blank">关于我</a>
-						</li>
 
 						<li class="layui-nav-item">
 							<a href="javascript:;" class="admin-header-user">
@@ -49,11 +46,8 @@
 								<span th:text="${user.name}"></span>
 							</a>
 							<dl class="layui-nav-child">
-								<dd>
-									<a href="javascript:;"><i class="fa fa-user-circle" aria-hidden="true"></i> 个人信息</a>
-								</dd>
-								<dd>
-									<a href="javascript:;"><i class="fa fa-gear" aria-hidden="true"></i> 设置</a>
+								<dd id="chpwd">
+									<a href="javascript:;"><i class="fa fa-user-circle" aria-hidden="true"></i>修改密码</a>
 								</dd>
 								<dd id="lock">
 									<a href="javascript:;">
@@ -70,8 +64,8 @@
 						<li class="layui-nav-item">
 							<a href="javascript:;"><i class="fa fa-television"></i></a>
 							<dl class="layui-nav-child" id="menuSysMobile"> <!-- 二级菜单 -->
-								<dd>
-									<a href="javascript:;"><i class="fa fa-user-circle" aria-hidden="true"></i> 个人信息</a>
+								<dd id="chpwdM">
+									<a href="javascript:;"><i class="fa fa-user-circle" aria-hidden="true"></i> 修改密码</a>
 								</dd>
 								<dd>
 									<a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> 注销</a>
@@ -103,7 +97,7 @@
 			<div class="layui-footer footer footer-demo" id="admin-footer">
 				<div class="layui-main">
 					<p>2017 &copy;
-						<a href="https://github.com/wxiaoqi/">github.com/wxiaoqi</a> LGPL license
+						<a href="javascript:void(0);">Panglin</a> LGPL license
 					</p>
 				</div>
 			</div>
@@ -118,32 +112,20 @@
 					<div class="admin-header-lock-img">
 						<img src="images/0.jpg"/>
 					</div>
-					<div class="admin-header-lock-name" id="lockUserName">Mr.AG</div>
-					<input type="text" class="admin-header-lock-input" value="输入密码解锁.." name="lockPwd" id="lockPwd" />
+					<div class="admin-header-lock-name" id="lockUserName"></div>
+					<input type="hidden" name="username" id="username" value="">
+					<input type="password" class="admin-header-lock-input" value="" name="password" id="password" placeholder="输入密码解锁.."/>
 					<button class="layui-btn layui-btn-small" id="unlock">解锁</button>
 				</div>
 			</script>
 			<!--锁屏模板 end -->
-			
+
+			<script th:inline="javascript">
+            	var name = [[${user.name}]];
+            	var loginname = [[${user.username}]];
+			</script>
 			<script type="text/javascript" src="layui.js"></script>
 			<script src="js/index.js"></script>
-			<script>
-				layui.use('layer', function() {
-					var $ = layui.jquery,
-						layer = layui.layer;
-
-					$('#aboutMe').on('click', function() {
-						layer.open({
-							title: '关于我',
-							maxmin: true,
-							type: 2,
-							content: 'http://www.jianshu.com/u/86feb75a6296',
-							area: ['800px', '500px']
-						});
-                    });
-					$('#about').load('README.md');
-				});
-			</script>
 		</div>
 	</body>
 

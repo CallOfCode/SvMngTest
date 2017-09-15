@@ -22,6 +22,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Date;
@@ -56,7 +57,7 @@ public class ResourceAccessFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         final String requestUri = request.getRequestURI();
         // 不进行拦截的地址
-        if (isStartWith(requestUri) || isContains(requestUri)|| ROOT_URI.equals(requestUri)) {
+        if (ROOT_URI.equals(requestUri)||isStartWith(requestUri) || isContains(requestUri)) {
             filterChain.doFilter(request, response);
             return;
         }else if(SecurityContextHolder.getContext().getAuthentication()!= null&&!(SecurityContextHolder.getContext()
@@ -167,7 +168,12 @@ public class ResourceAccessFilter implements Filter {
         UserInfo info = userService.getUserByUsername(username);
         String host =  ClientUtil.getClientIp(request);
         request.setAttribute("userId", info.getId());
-        request.setAttribute("userName", URLEncoder.encode(info.getName()));
+        try {
+            request.setAttribute("userName", URLEncoder.encode(info.getName(),"UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            request.setAttribute("userName", info.getName());
+            e.printStackTrace();
+        }
         request.setAttribute("userHost", ClientUtil.getClientIp(request));
         LogInfo logInfo = new LogInfo(pm.getMenu(),pm.getName(),pm.getUri(),new Date(),info.getId(),info.getName(),host);
         DBLog.getInstance().setLogService(logService).offerQueue(logInfo);

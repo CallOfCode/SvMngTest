@@ -24,7 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.formLogin().loginPage("/login").defaultSuccessUrl("/index").permitAll().and()
         .logout().logoutSuccessUrl("/login").invalidateHttpSession(true).and().authorizeRequests()
-        .antMatchers("/**/*.css", "/img/**", "/**/*.js","/api/**","/druid/**") // 放开"/api/**",通过oauth2.0来鉴权
+        .antMatchers("/**/*.css", "/img/**", "/**/*.js","/api/**","/druid/**","/account/unlock") // 放开"/api/**",通过oauth2.0来鉴权，/account/unlock是跟用户重新登录有关的，不需要拦截
         .permitAll().and().authorizeRequests().antMatchers("/**").authenticated();
     http.csrf().disable();
     http.headers().frameOptions().disable();

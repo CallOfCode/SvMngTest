@@ -6,10 +6,16 @@ var navbar;
 layui.config({
     base: 'js/',
     version: new Date().getTime()
-}).use(['element', 'layer', 'navbar', 'tab'], function () {
+}).use(['element', 'layer', 'navbar', 'tab','form', 'layedit', 'laydate'], function () {
     var element = layui.element(),
         $ = layui.jquery,
         layer = layui.layer;
+        form = layui.form();
+        layedit = layui.layedit;
+        laydate = layui.laydate;
+
+    var editIndex;
+
     navbar = layui.navbar();
     tab = layui.tab({
         elem: '.admin-nav-card' //设置选项卡容器
@@ -114,7 +120,7 @@ layui.config({
 
     $('#setting').on('click', function () {
         tab.tabAdd({
-            href: '/Manage/Account/Setting/',
+            href: '/Setting/',
             icon: 'fa-gear',
             title: '设置'
         });
@@ -131,6 +137,12 @@ layui.config({
     $('#lock').on('click', function () {
         lock($, layer);
     });
+    $('#chpwd').on('click', function () {
+        changPassword();
+    });
+    $('#chpwdM').on('click', function () {
+        changPassword();
+    });
 
     //手机设备的简单适配
     var treeMobile = $('.site-tree-mobile'),
@@ -141,6 +153,62 @@ layui.config({
     shadeMobile.on('click', function () {
         $('body').removeClass('site-mobile');
     });
+
+    var changPassword = function(){
+        $.get('/account/chgpwd', null, function (form) {
+            layer.open({
+                type: 1,
+                title: '修改密码',
+                content: form,
+                btn: ['保存', '取消'],
+                shade: false,
+                offset: ['10px', '10%'],
+                area: ['400px', '300px'],
+                maxmin: true,
+                yes: function (index) {
+                    //触发表单的提交事件
+                    layedit.sync(editIndex);
+                    $('form.layui-form').find('button[lay-filter=edit]').click();
+                },
+                full: function (elem) {
+                    var win = window.top === window.self ? window : parent.window;
+                    $(win).on('resize', function () {
+                        var $this = $(this);
+                        elem.width($this.width()).height($this.height()).css({
+                            top: 0,
+                            left: 0
+                        });
+                        elem.children('div.layui-layer-content').height($this.height() - 95);
+                    });
+                },
+                success: function (layero, index) {
+                    var form = layui.form();
+                    editIndex = layedit.build('description_editor');
+                    form.render();
+                    form.on('submit(edit)', function (data) {
+                        if( data.field.pwd=='' || data.field.pwd!=data.field.pwd2){
+                            layer.msg('请检查输入密码无误再进行修改');
+                            return false;
+                        }
+                        $.ajax({
+                            url: "/account/chgpwd",
+                            type: 'put',
+                            data: data.field,
+                            dataType: "json",
+                            success: function () {
+                                layer.msg('密码修改成功');
+                                layer.close(index);
+                            }
+
+                        });
+                        //这里可以写ajax方法提交表单
+                        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                    });
+                }
+            });
+        });
+    }
+
 });
 function refreshMenu(parentId){
 //设置navbar
@@ -173,8 +241,8 @@ function lock($, layer) {
         success: function (layero, lockIndex) {
             isShowLock = true;
             //给显示用户名赋值
-            //layero.find('div#lockUserName').text('admin');
-            //layero.find('input[name=username]').val('admin');
+            layero.find('div#lockUserName').text(name);
+            layero.find('input[name=username]').val(loginname);
             layero.find('input[name=password]').on('focus', function () {
                 var $this = $(this);
                 if ($this.val() === '输入密码解锁..') {
@@ -187,11 +255,8 @@ function lock($, layer) {
                         $this.attr('type', 'text').val('输入密码解锁..');
                     }
                 });
-            //在此处可以写一个请求到服务端删除相关身份认证，因为考虑到如果浏览器被强制刷新的时候，身份验证还存在的情况			
-            //do something...
-            //e.g. 
 
-            $.getJSON('/Account/Logout', null, function (res) {
+            $.getJSON('/account/logout', null, function (res) {
                 if (!res.rel) {
                     layer.msg(res.msg);
                 }
@@ -218,9 +283,7 @@ function lock($, layer) {
 			 * @param {String} 密码
 			 */
             var unlock = function (un, pwd) {
-                console.log(un, pwd);
-                //这里可以使用ajax方法解锁
-                $.post('/Account/UnLock', { userName: un, password: pwd }, function (res) {
+                $.post('/account/unlock', { username: un, password: pwd }, function (res) {
                     //验证成功
                     if (res.rel) {
                         //关闭锁屏层
@@ -230,10 +293,6 @@ function lock($, layer) {
                         layer.msg(res.msg, { icon: 2, time: 1000 });
                     }
                 }, 'json');
-                //isShowLock = false;
-                //演示：默认输入密码都算成功
-                //关闭锁屏层
-                //layer.close(lockIndex);
             };
         }
     });
