@@ -4,10 +4,12 @@ import com.github.cc.gate.common.biz.BaseController;
 import com.github.cc.gate.common.message.ObjectRestResponse;
 import com.github.cc.gate.common.message.TableResultResponse;
 import com.github.cc.gate.gateway.biz.GateClientBiz;
+import com.github.cc.gate.gateway.constant.CacheConstant;
 import com.github.cc.gate.gateway.entity.Element;
 import com.github.cc.gate.gateway.entity.GateClient;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
@@ -52,6 +54,7 @@ public class GateClientController extends BaseController<GateClientBiz,GateClien
 
     @RequestMapping(value = "/{id}/lock",method = RequestMethod.PUT)
     @ResponseBody
+    @CacheEvict(value = CacheConstant.CACHE_CLIENT_PERMISSIONS, key = "#id")
     public ObjectRestResponse<GateClient> updateLock(@PathVariable int id,String locked){
         baseBiz.updateLockById(id,locked);
         return new ObjectRestResponse<GateClient>().rel(true);
@@ -59,6 +62,7 @@ public class GateClientController extends BaseController<GateClientBiz,GateClien
 
     @RequestMapping(value = "/{id}/service", method = RequestMethod.PUT)
     @ResponseBody
+    @CacheEvict(value = CacheConstant.CACHE_CLIENT_PERMISSIONS, key = "#id")
     public ObjectRestResponse modifiyServices(@PathVariable int id,String services){
         baseBiz.modifyClientServices(id, services);
         return new ObjectRestResponse().rel(true);

@@ -5,14 +5,14 @@ import com.github.cc.gate.common.message.ObjectRestResponse;
 import com.github.cc.gate.common.message.TableResultResponse;
 import com.github.cc.gate.gateway.biz.ElementBiz;
 import com.github.cc.gate.gateway.biz.UserBiz;
+import com.github.cc.gate.gateway.constant.CacheConstant;
 import com.github.cc.gate.gateway.entity.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
@@ -26,6 +26,40 @@ public class ElementController extends BaseController<ElementBiz,Element> {
     @RequestMapping(value="/edit",method = RequestMethod.GET)
     public String elementEdit(){
         return "element/edit";
+    }
+
+    @RequestMapping(value = "",method = RequestMethod.POST)
+    @ResponseBody
+    @CacheEvict(value = CacheConstant.CACHE_SERVICE_PERMISSIONS,key = "#entity.code",beforeInvocation = false)//新增时code可能重复，需要更新缓存
+    public ObjectRestResponse<Element> add(Element entity){
+        baseBiz.insertSelective(entity);
+        return new ObjectRestResponse<Element>().rel(true);
+    }
+
+    @RequestMapping(value = "/{id}",method = RequestMethod.PUT)
+    @ResponseBody
+    @Caching(
+            evict = {
+                    @CacheEvict(value = CacheConstant.CACHE_SERVICE_PERMISSIONS,allEntries = true),
+                    @CacheEvict(value = CacheConstant.CACHE_CLIENT_PERMISSIONS,allEntries = true)
+            }
+    )
+    public ObjectRestResponse<Element> update(Element entity){
+        baseBiz.updateById(entity);
+        return new ObjectRestResponse<Element>().rel(true);
+    }
+
+    @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+    @ResponseBody
+    @Caching(
+            evict = {
+                    @CacheEvict(value = CacheConstant.CACHE_SERVICE_PERMISSIONS,allEntries = true),
+                    @CacheEvict(value = CacheConstant.CACHE_CLIENT_PERMISSIONS,allEntries = true)
+            }
+    )
+    public ObjectRestResponse<Element> remove(@PathVariable int id){
+        baseBiz.deleteById(id);
+        return new ObjectRestResponse<Element>().rel(true);
     }
 
     @RequestMapping(value = "/page", method = RequestMethod.GET)

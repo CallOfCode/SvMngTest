@@ -3,12 +3,14 @@ package com.github.cc.gate.gateway.service;
 import com.github.cc.gate.common.constant.CommonConstant;
 import com.github.cc.gate.gateway.biz.ElementBiz;
 import com.github.cc.gate.gateway.biz.GateClientBiz;
+import com.github.cc.gate.gateway.constant.CacheConstant;
 import com.github.cc.gate.gateway.entity.Element;
 import com.github.cc.gate.gateway.entity.GateClient;
 import com.github.cc.gate.gateway.vo.authority.PermissionInfo;
 import com.github.cc.gate.gateway.vo.gate.ClientInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -32,6 +34,7 @@ public class GateClientService {
         return clientInfo;
     }
 
+    @Cacheable(value = CacheConstant.CACHE_CLIENT_PERMISSIONS,key = "#clientId")
     public List<PermissionInfo> getGateServiceInfo(String clientId) {
         GateClient gateClient = new GateClient();
         gateClient.setCode(clientId);
