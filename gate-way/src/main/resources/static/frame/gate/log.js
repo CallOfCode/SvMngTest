@@ -74,4 +74,9 @@ gateLog.init = function () {
 };
 layui.use(['form', 'layedit', 'laydate'], function () {
     gateLog.init();
+
+    $('#btn_query').on('click', function () {
+        gateLog.table.bootstrapTable('refresh', gateLog.queryParams());
+    });
+
 });
